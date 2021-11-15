@@ -1,0 +1,24 @@
+# permissions for end users to edit milvusstandalones.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: milvusstandalone-editor-role
+rules:
+- apiGroups:
+  - milvus.io.milvus.io
+  resources:
+  - milvusstandalones
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - milvus.io.milvus.io
+  resources:
+  - milvusstandalones/status
+  verbs:
+  - get

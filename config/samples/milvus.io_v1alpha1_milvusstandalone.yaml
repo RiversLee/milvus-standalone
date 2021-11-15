@@ -1,0 +1,6 @@
+apiVersion: milvus.io.milvus.io/v1alpha1
+kind: Milvusstandalone
+metadata:
+  name: milvusstandalone-sample
+spec:
+  # TODO(user): Add fields here
