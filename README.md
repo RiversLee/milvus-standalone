@@ -1,1 +1,5 @@
-# milvus-standalone
+# Milvus-Standalone Operator
+
+>**ATTENTIONS:** THE `MAIN` BRANCH MAY BE IN AN UNSTABLE OR EVENT BROKEN STATE DURING DEVELOPMENT 
+
+#Getting started
