@@ -31,7 +31,17 @@ type MilvusstandaloneSpec struct {
 	// Foo is an example field of Milvusstandalone. Edit milvusstandalone_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
 }
+//MilvusStaus is a type for milvus status
+type MilvusStatus string
 
+const(
+	// StatusCreating is the status of creating.
+	StatusCreating MilvusStatus = "Creating"
+	// StatusHealthy is the status of healthy.
+	StatusHealthy MilvusStatus = "Healthy"
+	// StatusUnHealthy is the status of unhealthy.
+	StatusUnHealthy MilvusStatus = "Unhealthy"
+)
 // MilvusstandaloneStatus defines the observed state of Milvusstandalone
 type MilvusstandaloneStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
