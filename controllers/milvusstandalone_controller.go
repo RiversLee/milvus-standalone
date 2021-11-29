@@ -18,19 +18,27 @@ package controllers
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-logr/logr"
+	"helm.sh/helm/v3/pkg/cli"
+	"k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	milvusiov1alpha1 "github.com/milvus-io/mivlus-standalone-operator/api/v1alpha1"
 )
-
+const (
+	MSFinalizerName = "milvusstandalone.milvus.io/finalizer"
+)
 // MilvusstandaloneReconciler reconciles a Milvusstandalone object
 type MilvusstandaloneReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	logger logr.Logger
+	helmSettings *cli.EnvSettings
 }
 
 //+kubebuilder:rbac:groups=milvus.io.milvus.io,resources=milvusstandalones,verbs=get;list;watch;create;update;patch;delete
@@ -47,9 +55,41 @@ type MilvusstandaloneReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.10.0/pkg/reconcile
 func (r *MilvusstandaloneReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	milvusstandalone := &milvusiov1alpha1.Milvusstandalone{}
+	if err :=  r.Get(ctx, req.NamespacedName, milvusstandalone); err != nil {
+		if errors.IsNotFound(err) {
+			return ctrl.Result{}, nil
+		}
+		return ctrl.Result{}, fmt.Errorf("error get milvus standalone: #{err}")
+	}
+
+	//Finalize
+	if milvusstandalone.ObjectMeta.DeletionTimestamp.IsZero() {
+		if !controllerutil.ContainsFinalizer(milvusstandalone,MSFinalizerName) {
+			controllerutil.AddFinalizer(milvusstandalone, MSFinalizerName)
+			if err := r.Update(ctx, milvusstandalone);err != nil {
+				return ctrl.Result{},nil
+			}
+		}
+	} else {
+
+	}
+
+	//start reconcile
+	r.logger.Info("start reconcile")
+	old := milvusstandalone.DeepCopy()
+
+	if err := r.SetDefault(ctx,milvusstandalone);err != nil{
+		return ctrl.Result{},err
+	}
+
+	if !IsEqual(old,milvusstandalone){
+		diff,_ := diffObject(old,milvusstandalone)
+		r.logger.Info("SetDefault: "+string(diff),"name",old.Name,"namespace",old.Namespace)
+		return ctrl.Result{},r.Update(ctx,milvusstandalone)
+	}
+
 
 	return ctrl.Result{}, nil
 }

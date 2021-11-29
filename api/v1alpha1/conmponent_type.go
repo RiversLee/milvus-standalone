@@ -5,7 +5,7 @@ import (
 )
 
 
-type ComponentSpec struct {
+type Component struct {
 	// +kubebuilder:validation:Optional
 	Image string `json:"image,omitempty"`
 

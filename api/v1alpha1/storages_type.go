@@ -12,7 +12,7 @@ type MilvusStorageDependencies struct {
 	Etcd MilvusEtcd `json:"etcd"`
 
 	// +kubebuilder:validation:Optional
-	Storage MilvusMinio `json:"storage"`
+	Minio MilvusMinio `json:"storage"`
 }
 type MilvusEtcd struct {
 	// +kubebuilder:validation:Optional

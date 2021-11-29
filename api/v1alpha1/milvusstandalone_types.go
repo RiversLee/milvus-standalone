@@ -29,7 +29,9 @@ type MilvusstandaloneSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Milvusstandalone. Edit milvusstandalone_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// +kubebuilder:validation:Optional
+	Com Component `json:"component,omitempty"`
+	Dep MilvusStorageDependencies `json:"dependencies,omitempty"`
 }
 //MilvusStaus is a type for milvus status
 type MilvusStatus string
@@ -46,6 +48,9 @@ const(
 type MilvusstandaloneStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	// +kubebuilder:default:="Creating"
+	Status MilvusStatus `json:"status"`
+	Endpoint string `json:"endpoint"`
 }
 
 //+kubebuilder:object:root=true
